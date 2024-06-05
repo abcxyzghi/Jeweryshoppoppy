@@ -49,6 +49,7 @@ public class AuthenticationAPI {
     public void forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         authenticationService.forgotPasswordRequest(forgotPasswordRequest.getEmail());
     }
+
     @PatchMapping("reset-password")
     public void resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         authenticationService.resetPassword(resetPasswordRequest);
