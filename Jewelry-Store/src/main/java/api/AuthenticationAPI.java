@@ -40,7 +40,6 @@ public class AuthenticationAPI {
         Account account = authenticationService.register(registerRequest);
         return ResponseEntity.ok(account);
     }
-
     @PostMapping("login")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
         AccountResponse account = authenticationService.login(loginRequest);
@@ -49,6 +48,11 @@ public class AuthenticationAPI {
     @PostMapping("forgot-password")
     public void forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
         authenticationService.forgotPasswordRequest(forgotPasswordRequest.getEmail());
+    }
+
+    @PatchMapping("reset-password")
+    public void resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        authenticationService.resetPassword(resetPasswordRequest);
     }
     @GetMapping("account")
     public ResponseEntity getAllAccount() {
