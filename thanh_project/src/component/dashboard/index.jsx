@@ -13,6 +13,7 @@ const { Header, Sider, Content } = Layout;
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [items, setItems] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -45,6 +46,51 @@ const Dashboard = () => {
     if (!account) {
       // navigate("/login");
     }
+
+    if (account.role === "ADMIN") {
+      setItems([
+        {
+          key: "/dashboard/account",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/account"}>Manage account</Link>,
+        },
+        {
+          key: "/dashboard/category",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/category"}>Manage category</Link>,
+        },
+        {
+          key: "/dashboard/voucher",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/voucher"}>Manage voucher</Link>,
+        },
+        {
+          key: "/dashboard/product",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/product"}>Manage product</Link>,
+        },
+      ]);
+    }
+
+    if (account.role === "MANAGER") {
+      setItems([
+        {
+          key: "/dashboard/category",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/category"}>Manage category</Link>,
+        },
+        {
+          key: "/dashboard/voucher",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/voucher"}>Manage voucher</Link>,
+        },
+        {
+          key: "/dashboard/product",
+          icon: <UserOutlined />,
+          label: <Link to={"/dashboard/product"}>Manage product</Link>,
+        },
+      ]);
+    }
   }, []);
 
   return (
@@ -59,13 +105,7 @@ const Dashboard = () => {
           theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
-          items={[
-            {
-              key: "/dashboard/account",
-              icon: <UserOutlined />,
-              label: <Link to={"/dashboard/account"}>Manage Account</Link>,
-            },
-          ]}
+          items={items}
         />
       </Sider>
       <Layout>
@@ -80,7 +120,7 @@ const Dashboard = () => {
             <Dropdown overlay={menu} placement="bottomRight">
               <Space style={{ marginRight: 24 }}>
                 <Avatar icon={<UserOutlined />} />
-                <span>{account?.name}</span>
+                <span>{account?.fullName}</span>
               </Space>
             </Dropdown>
           </div>

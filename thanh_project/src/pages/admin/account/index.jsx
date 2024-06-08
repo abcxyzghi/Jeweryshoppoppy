@@ -2,21 +2,21 @@ import { Button, Form, Input, Modal, Select, Space, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import api from "../../../config/axios";
 import { toast } from "react-toastify";
-
 function ManageAccount() {
   const [isShowModal, setShowModal] = useState(false);
   const [form] = Form.useForm();
   const [account, setAccount] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const onFinish = async (values) => {
     try {
+      setLoading(true);
       console.log("Form values:", values);
       await api.post("register", values);
+      setAccount([...account, values]);
       // Handle form submission here
-
       form.resetFields();
       setShowModal(false);
-      fetchAccount();
+      setLoading(false);
       toast.success("Successfully create new account");
     } catch (err) {
       toast.error(err.response.data);
@@ -26,12 +26,12 @@ function ManageAccount() {
   const fetchAccount = async () => {
     const response = await api.get("account");
     setAccount(response.data);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchAccount();
   }, []);
-
   const dataSource = [
     {
       key: "1",
@@ -102,12 +102,15 @@ function ManageAccount() {
       >
         Create new account
       </Button>
-      <Table dataSource={account} columns={columns} />
+      <Table dataSource={account} columns={columns} loading={loading} />
       <Modal
+        confirmLoading={loading}
         open={isShowModal}
         title="Create new account"
         onCancel={() => setShowModal(false)}
-        onOk={() => form.submit()}
+        onOk={() => {
+          form.submit();
+        }}
       >
         <Form form={form} name="userForm" onFinish={onFinish} layout="vertical">
           <Form.Item

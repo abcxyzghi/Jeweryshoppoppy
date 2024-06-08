@@ -7,6 +7,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/home";
 import ForgotPassword from "./pages/forgot-password";
 import ResetPassword from "./pages/reset-password";
+import { ManageCategory } from "./pages/manager/category";
+import { ManageProduct } from "./pages/manager/product";
+import { ManageVoucher } from "./pages/manager/voucher";
 
 function DemoReact() {
   const router = createBrowserRouter([
@@ -33,6 +36,18 @@ function DemoReact() {
         {
           path: "account",
           element: <ManageAccount />,
+        },
+        {
+          path: "category",
+          element: <ManageCategory />,
+        },
+        {
+          path: "product",
+          element: <ManageProduct />,
+        },
+        {
+          path: "voucher",
+          element: <ManageVoucher />,
         },
       ],
     },
