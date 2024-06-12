@@ -1,5 +1,6 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,11 @@ public class Category {
     String name;
     String description;
 
+    @JsonIgnore
+    boolean isDeleted = false;
+
+
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     List<Product> products;
 }

@@ -1,11 +1,10 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
-import com.example.demo.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import online.jewerystorepoppy.be.enums.OrderStatus;
 
 import java.util.Date;
 import java.util.List;

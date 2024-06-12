@@ -1,4 +1,4 @@
-package com.example.demo.enums;
+package online.jewerystorepoppy.be.enums;
 
 public enum Role {
     ADMIN,

@@ -1,5 +1,6 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,9 @@ public class Certificate {
     String url;
     Date expiredDate;
     Date startAt;
+    boolean isDeleted = false;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "material_id")
     Material material;
