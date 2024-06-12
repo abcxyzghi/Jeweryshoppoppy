@@ -1,5 +1,6 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,10 +23,16 @@ public class Voucher {
     Date endAt;
     Date createAt;
 
+    @JsonIgnore
+    boolean isDeleted = false;
+
+
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "manager_id")
     Account createBy;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "order_id")
     Orders order;

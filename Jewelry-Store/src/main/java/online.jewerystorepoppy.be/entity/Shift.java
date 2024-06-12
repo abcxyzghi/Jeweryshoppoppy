@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

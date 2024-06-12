@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,6 +21,7 @@ public class Material {
     String description;
     String diamondOrigin;
     Date createAt;
+    boolean isDeleted = false;
 
     @OneToMany(mappedBy = "material")
     List<Certificate> certificates;

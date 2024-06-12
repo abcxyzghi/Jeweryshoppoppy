@@ -1,12 +1,12 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
-import com.example.demo.enums.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import online.jewerystorepoppy.be.enums.AccountStatus;
+import online.jewerystorepoppy.be.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -44,6 +44,9 @@ public class Account implements UserDetails {
 
     @OneToMany(mappedBy = "createBy")
     List<Voucher> vouchers;
+
+    @Enumerated(EnumType.STRING)
+    AccountStatus accountStatus = AccountStatus.ACTIVE;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

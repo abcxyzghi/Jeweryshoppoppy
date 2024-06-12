@@ -1,5 +1,6 @@
-package com.example.demo.entity;
+package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,14 +20,18 @@ public class Product {
     String name;
     String description;
     float price;
+    boolean isDeleted = false;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "products")
     List<Material> materials;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     List<OrderDetail> orderDetails;
 
