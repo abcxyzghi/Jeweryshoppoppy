@@ -36,7 +36,7 @@ public class CategoryAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity detele(@PathVariable long id) {
+    public ResponseEntity delete(@PathVariable long id) {
         return ResponseEntity.ok(categoryService.delete(id));
     }
 }

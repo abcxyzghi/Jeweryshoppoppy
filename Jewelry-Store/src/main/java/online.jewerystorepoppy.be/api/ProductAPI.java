@@ -39,7 +39,7 @@ public class ProductAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity detele(@PathVariable long id) {
+    public ResponseEntity delete(@PathVariable long id) {
         return ResponseEntity.ok(productService.delete(id));
     }
 }
