@@ -1,4 +1,4 @@
-package online.jewerystorepoppy.be.service;
+    package online.jewerystorepoppy.be.service;
 
 import online.jewerystorepoppy.be.model.*;
 import online.jewerystorepoppy.be.repository.AuthenticationRepository;
@@ -34,6 +34,22 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     EmailService emailService;
+
+    public Account update(long id, RegisterRequest registerRequest) {
+        Account account = authenticationRepository.findById(id).get();
+
+        account.setPhone(registerRequest.getPhone());
+        account.setRole(registerRequest.getRole());
+        account.setEmail(registerRequest.getEmail());
+        account.setFullName(registerRequest.getFullName());
+        return authenticationRepository.save(account);
+    }
+
+    public Account delete(long id){
+        Account account = authenticationRepository.findById(id).get();
+        account.setAccountStatus(AccountStatus.DELETED);
+        return authenticationRepository.save(account);
+    }
 
 
     public Account register(RegisterRequest registerRequest) {
