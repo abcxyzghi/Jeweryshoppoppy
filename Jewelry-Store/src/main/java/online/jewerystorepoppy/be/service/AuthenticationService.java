@@ -1,6 +1,8 @@
     package online.jewerystorepoppy.be.service;
 
 import online.jewerystorepoppy.be.enums.AccountStatus;
+import online.jewerystorepoppy.be.enums.Role;
+import online.jewerystorepoppy.be.exception.AuthException;
 import online.jewerystorepoppy.be.model.*;
 import online.jewerystorepoppy.be.repository.AuthenticationRepository;
 import org.apache.coyote.BadRequestException;
@@ -38,9 +40,8 @@ public class AuthenticationService implements UserDetailsService {
 
     public Account update(long id, RegisterRequest registerRequest) {
         Account account = authenticationRepository.findById(id).get();
-
+        if(account.getRole() != Role.CUSTOMER) account.setRole(registerRequest.getRole());
         account.setPhone(registerRequest.getPhone());
-        account.setRole(registerRequest.getRole());
         account.setEmail(registerRequest.getEmail());
         account.setFullName(registerRequest.getFullName());
         return authenticationRepository.save(account);
@@ -64,19 +65,22 @@ public class AuthenticationService implements UserDetailsService {
         account.setRole(registerRequest.getRole());
         account.setEmail(registerRequest.getEmail());
         account.setFullName(registerRequest.getFullName());
+        if (account.getRole() == Role.CUSTOMER) {
+        } else{
+                try {
+                    EmailDetail emailDetail = new EmailDetail();
+                    emailDetail.setRecipient(account.getEmail());
+                    emailDetail.setSubject("You are invited to system!");
+                    emailDetail.setMsgBody("aaa");
+                    emailDetail.setButtonValue("Login to system");
+                    emailDetail.setLink("http://jewerystorepoppy.online/");
+                    emailService.sendMailTemplate(emailDetail);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
 
-        try {
-            EmailDetail emailDetail = new EmailDetail();
-            emailDetail.setRecipient(account.getEmail());
-            emailDetail.setSubject("You are invited to system!");
-            emailDetail.setMsgBody("aaa");
-            emailDetail.setButtonValue("Login to system");
-            emailDetail.setLink("http://jewerystorepoppy.online/");
-            emailService.sendMailTemplate(emailDetail);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
 
         // nhờ repo => save xuống db
         return authenticationRepository.save(account);
@@ -89,7 +93,10 @@ public class AuthenticationService implements UserDetailsService {
         ));
         // => account chuẩn
 
-        Account account = authenticationRepository.findAccountByPhone(loginRequest.getPhone());
+        Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhone(),loginRequest.getPhone());
+        if(account.getAccountStatus() == AccountStatus.DELETED){
+            throw new AuthException("Account deleted!");
+        }
         String token = tokenService.generateToken(account);
 
         AccountResponse accountResponse = new AccountResponse();
