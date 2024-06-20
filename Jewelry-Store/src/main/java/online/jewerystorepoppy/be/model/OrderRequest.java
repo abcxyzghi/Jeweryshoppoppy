@@ -7,4 +7,6 @@ import java.util.List;
 @Data
 public class OrderRequest {
     List<OrderDetailRequest> orderDetailRequests;
+    long customerId;
+    long voucherId;
 }
