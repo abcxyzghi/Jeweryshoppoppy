@@ -1,10 +1,13 @@
 package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import online.jewerystorepoppy.be.enums.ShiftStatus;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,6 +18,10 @@ public class Shift {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
+    Date fromTime;
+    Date toTime;
+    ShiftStatus status;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
