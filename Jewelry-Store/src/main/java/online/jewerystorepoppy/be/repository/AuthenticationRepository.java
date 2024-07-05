@@ -9,5 +9,7 @@ public interface AuthenticationRepository extends JpaRepository<Account, Long> {
 
     Account findAccountByEmail(String email);
 
+    Account findAccountById(long id);
+
     Account findAccountByEmailOrPhone(String email, String phone);
 }
