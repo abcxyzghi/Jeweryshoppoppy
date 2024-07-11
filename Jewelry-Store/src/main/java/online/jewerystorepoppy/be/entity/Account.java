@@ -1,5 +1,6 @@
 package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import online.jewerystorepoppy.be.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,10 +39,16 @@ public class Account implements UserDetails {
     Role role;
 
     @OneToMany(mappedBy = "staff")
+    @JsonIgnore
     List<Shift> shifts;
 
     @OneToMany(mappedBy = "createBy")
-    List<Orders> orders;
+    @JsonIgnore
+    List<Orders> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    List<Orders> ordersOfCustomer;
 
     @OneToMany(mappedBy = "createBy")
     List<Voucher> vouchers;
