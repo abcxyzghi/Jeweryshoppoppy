@@ -2,13 +2,13 @@ package online.jewerystorepoppy.be.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import online.jewerystorepoppy.be.model.EmailDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import online.jewerystorepoppy.be.model.EmailDetail;
 
 @Service
 public class EmailService {

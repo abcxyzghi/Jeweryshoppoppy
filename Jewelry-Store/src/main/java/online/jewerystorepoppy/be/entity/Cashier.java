@@ -16,8 +16,8 @@ public class Cashier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-
     String name;
+    boolean isDeleted;
 
     @OneToMany(mappedBy = "cashier")
     List<Shift> shifts;
