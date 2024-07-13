@@ -1,14 +1,15 @@
 package online.jewerystorepoppy.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import online.jewerystorepoppy.be.entity.Account;
+import online.jewerystorepoppy.be.enums.Role;
 import online.jewerystorepoppy.be.model.*;
+import online.jewerystorepoppy.be.service.AuthenticationService;
 import online.jewerystorepoppy.be.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import online.jewerystorepoppy.be.entity.Account;
-import online.jewerystorepoppy.be.service.AuthenticationService;
 
 @RestController
 @RequestMapping("api")
@@ -70,7 +71,7 @@ public class AuthenticationAPI {
     }
 
     @GetMapping("account")
-    public ResponseEntity getAllAccount() {
-        return ResponseEntity.ok(authenticationService.getAllAccount());
+    public ResponseEntity getAllAccount(@RequestParam(required = false) Role role, @RequestParam(required = false) String keyWord) {
+        return ResponseEntity.ok(authenticationService.getAllAccount(role, keyWord));
     }
 }

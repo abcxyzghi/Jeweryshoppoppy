@@ -1,5 +1,6 @@
-    package online.jewerystorepoppy.be.service;
+package online.jewerystorepoppy.be.service;
 
+import online.jewerystorepoppy.be.entity.Account;
 import online.jewerystorepoppy.be.enums.AccountStatus;
 import online.jewerystorepoppy.be.enums.Role;
 import online.jewerystorepoppy.be.exception.AuthException;
@@ -15,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import online.jewerystorepoppy.be.entity.Account;
 
 import java.util.List;
 
@@ -40,46 +40,45 @@ public class AuthenticationService implements UserDetailsService {
 
     public Account update(long id, RegisterRequest registerRequest) {
         Account account = authenticationRepository.findById(id).get();
-        if(account.getRole() != Role.CUSTOMER) account.setRole(registerRequest.getRole());
+        if (account.getRole() != Role.CUSTOMER) account.setRole(registerRequest.getRole());
         account.setPhone(registerRequest.getPhone());
         account.setEmail(registerRequest.getEmail());
         account.setFullName(registerRequest.getFullName());
         return authenticationRepository.save(account);
     }
 
-    public Account delete(long id){
+    public Account delete(long id) {
         Account account = authenticationRepository.findById(id).get();
         account.setAccountStatus(AccountStatus.DELETED);
         return authenticationRepository.save(account);
     }
-
 
     public Account register(RegisterRequest registerRequest) {
         //registerRequest: thông tin ngừoi dùng yêu cầu
 
         // xử lý logic register
         Account account = new Account();
-
         account.setPhone(registerRequest.getPhone());
-        account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         account.setRole(registerRequest.getRole());
         account.setEmail(registerRequest.getEmail());
         account.setFullName(registerRequest.getFullName());
         if (account.getRole() == Role.CUSTOMER) {
-        } else{
-                try {
-                    EmailDetail emailDetail = new EmailDetail();
-                    emailDetail.setRecipient(account.getEmail());
-                    emailDetail.setSubject("You are invited to system!");
-                    emailDetail.setMsgBody("aaa");
-                    emailDetail.setButtonValue("Login to system");
-                    emailDetail.setLink("http://jewerystorepoppy.online/");
-                    emailService.sendMailTemplate(emailDetail);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    e.printStackTrace();
-                }
+
+        } else {
+            account.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+            try {
+                EmailDetail emailDetail = new EmailDetail();
+                emailDetail.setRecipient(account.getEmail());
+                emailDetail.setSubject("You are invited to system!");
+                emailDetail.setMsgBody("aaa");
+                emailDetail.setButtonValue("Login to system");
+                emailDetail.setLink("http://jewerystorepoppy.online/");
+                emailService.sendMailTemplate(emailDetail);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
+        }
 
 
         // nhờ repo => save xuống db
@@ -93,8 +92,8 @@ public class AuthenticationService implements UserDetailsService {
         ));
         // => account chuẩn
 
-        Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhone(),loginRequest.getPhone());
-        if(account.getAccountStatus() == AccountStatus.DELETED){
+        Account account = authenticationRepository.findAccountByEmailOrPhone(loginRequest.getPhone(), loginRequest.getPhone());
+        if (account.getAccountStatus() == AccountStatus.DELETED) {
             throw new AuthException("Account deleted!");
         }
         String token = tokenService.generateToken(account);
@@ -105,6 +104,7 @@ public class AuthenticationService implements UserDetailsService {
         accountResponse.setEmail(account.getEmail());
         accountResponse.setFullName(account.getFullName());
         accountResponse.setRole(account.getRole());
+        accountResponse.setId(account.getId());
 
         return accountResponse;
     }
@@ -136,13 +136,21 @@ public class AuthenticationService implements UserDetailsService {
     }
 
 
-    public List<Account> getAllAccount() {
+    public List<Account> getAllAccount(Role role, String keyWord) {
+        if (role != null) {
+            return authenticationRepository.findAccountByRole(role);
+        }
+
+        if (keyWord != null) {
+            return authenticationRepository.findAccountByEmailContainingOrPhoneContainingOrFullNameContaining(keyWord, keyWord, keyWord);
+        }
+
         return authenticationRepository.findAll();
     }
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        return authenticationRepository.findAccountByPhone(phone);
+        return authenticationRepository.findAccountByEmailOrPhone(phone, phone);
     }
 
     public Account getCurrentAccount() {

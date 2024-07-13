@@ -36,7 +36,7 @@ public class MaterialAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity detele(@PathVariable long id) {
         return ResponseEntity.ok(materialService.delete(id));
     }
 }
