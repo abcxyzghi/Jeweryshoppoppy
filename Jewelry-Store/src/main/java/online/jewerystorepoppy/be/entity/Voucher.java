@@ -22,6 +22,7 @@ public class Voucher {
     Date startAt;
     Date endAt;
     Date createAt;
+    float value;
 
     @JsonIgnore
     boolean isDeleted = false;
