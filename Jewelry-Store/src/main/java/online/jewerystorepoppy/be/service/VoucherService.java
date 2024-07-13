@@ -15,10 +15,14 @@ public class VoucherService {
     VoucherRepository voucherRepository;
 
     public Voucher create(Voucher Voucher) {
+        Voucher.setCreateAt(new Date());
         return voucherRepository.save(Voucher);
     }
 
-    public List<Voucher> get() {
+    public List<Voucher> get(String code) {
+        if (code != null) {
+            return voucherRepository.findVoucherByCode(code);
+        }
         return voucherRepository.findVouchersByIsDeletedFalse();
     }
 
@@ -38,6 +42,7 @@ public class VoucherService {
         voucher.setCreateAt(new Date());
         voucher.setStartAt(voucherRequest.getStartAt());
         voucher.setEndAt(voucherRequest.getEndAt());
+        voucher.setValue(voucherRequest.getValue());
         return voucherRepository.save(voucher);
     }
 }
