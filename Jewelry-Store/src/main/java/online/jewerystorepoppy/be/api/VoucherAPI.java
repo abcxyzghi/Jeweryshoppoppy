@@ -1,6 +1,7 @@
 package online.jewerystorepoppy.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import online.jewerystorepoppy.be.entity.Product;
 import online.jewerystorepoppy.be.entity.Voucher;
 import online.jewerystorepoppy.be.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class VoucherAPI {
     VoucherService voucherService;
 
     @GetMapping
-    public ResponseEntity get() {
-        return ResponseEntity.ok(voucherService.get());
+    public ResponseEntity get(@RequestParam(required = false) String code) {
+        return ResponseEntity.ok(voucherService.get(code));
     }
 
     @GetMapping("{id}")
@@ -36,7 +37,7 @@ public class VoucherAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity detele(@PathVariable long id) {
         return ResponseEntity.ok(voucherService.delete(id));
     }
 }
