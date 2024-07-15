@@ -16,8 +16,8 @@ public class CategoryAPI {
     CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity get() {
-        return ResponseEntity.ok(categoryService.get());
+    public ResponseEntity get(@RequestParam(required = false) String keyWord) {
+        return ResponseEntity.ok(categoryService.get(keyWord));
     }
 
     @GetMapping("{id}")
@@ -36,7 +36,7 @@ public class CategoryAPI {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity detele(@PathVariable long id) {
         return ResponseEntity.ok(categoryService.delete(id));
     }
 }
