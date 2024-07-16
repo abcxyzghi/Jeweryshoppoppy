@@ -56,6 +56,10 @@ public class Account implements UserDetails {
     @Enumerated(EnumType.STRING)
     AccountStatus accountStatus = AccountStatus.ACTIVE;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<OrderBuy> orderBuys;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

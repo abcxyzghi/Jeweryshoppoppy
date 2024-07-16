@@ -1,6 +1,7 @@
 package online.jewerystorepoppy.be.service;
 
 import online.jewerystorepoppy.be.entity.Category;
+import online.jewerystorepoppy.be.exception.AuthException;
 import online.jewerystorepoppy.be.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public List<Category> get() {
+    public List<Category> get(String keyWord) {
+        if (keyWord != null) return categoryRepository.findCategoriesByIsDeletedFalseAndNameContaining(keyWord);
         return categoryRepository.findCategoriesByIsDeletedFalse();
     }
 
@@ -27,6 +29,11 @@ public class CategoryService {
 
     public Category delete(long id) {
         Category category = getById(id);
+        category.getProducts().stream().forEach(product -> {
+            if (!product.isDeleted()) {
+                throw new AuthException("Category still have product!!!");
+            }
+        });
         category.setDeleted(true);
         return categoryRepository.save(category);
     }
