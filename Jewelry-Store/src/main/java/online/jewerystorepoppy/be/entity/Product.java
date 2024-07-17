@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,9 @@ public class Product {
     String name;
     String description;
     float price;
+    String code;
+    int quantity;
+    String image;
     boolean isDeleted = false;
 
     @JsonIgnore
@@ -35,4 +39,6 @@ public class Product {
     @OneToMany(mappedBy = "product")
     List<OrderDetail> orderDetails;
 
+    @ManyToMany(mappedBy = "products")
+    List<Size> sizes = new ArrayList<>();
 }
