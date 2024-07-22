@@ -32,8 +32,8 @@ public class OrderAPI {
     }
 
     @GetMapping
-    public ResponseEntity getOrder() {
-        List<Orders> orders = orderService.getOrder();
+    public ResponseEntity getOrder(@RequestParam(required = false) String phone) {
+        List<Orders> orders = orderService.getOrder(phone);
         return ResponseEntity.ok(orders);
     }
 
