@@ -1,13 +1,16 @@
 package online.jewerystorepoppy.be.service;
 
 import online.jewerystorepoppy.be.entity.*;
+import online.jewerystorepoppy.be.enums.GuaranteeStatus;
 import online.jewerystorepoppy.be.enums.OrderStatus;
+import online.jewerystorepoppy.be.exception.AuthException;
 import online.jewerystorepoppy.be.model.OrderDetailRequest;
 import online.jewerystorepoppy.be.model.OrderRequest;
 import online.jewerystorepoppy.be.repository.AuthenticationRepository;
 import online.jewerystorepoppy.be.repository.OrderRepository;
 import online.jewerystorepoppy.be.repository.ProductRepository;
 import online.jewerystorepoppy.be.repository.VoucherRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,10 +63,26 @@ public class OrderService {
 
         for (OrderDetailRequest orderDetailRequest : orderRequest.getOrderDetailRequests()) {
             OrderDetail orderDetail = new OrderDetail();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.YEAR, 1);
+
+            Guarantee guarantee = new Guarantee();
+            guarantee.setStatus(GuaranteeStatus.ACTIVE);
+            guarantee.setOrderDetail(orderDetail);
+            guarantee.setStartAt(new Date());
+            guarantee.setEndAt(calendar.getTime());
+
             Product product = productRepository.findById(orderDetailRequest.getProductId()).get();
+            if(product.getQuantity() < orderDetailRequest.getQuantity()) {
+                throw new AuthException("Don't have available for sale!");
+            }else{
+                product.setQuantity(product.getQuantity() -  orderDetailRequest.getQuantity());
+            }
             orderDetail.setProduct(product);
-            orderDetail.setQuantity(orderDetail.getQuantity());
+            orderDetail.setQuantity(orderDetailRequest.getQuantity());
             orderDetail.setOrder(order);
+            orderDetail.setGuarantee(guarantee);
             orderDetails.add(orderDetail);
             totalAmount += product.getPrice() * orderDetailRequest.getQuantity();
         }
@@ -93,8 +112,8 @@ public class OrderService {
         String tmnCode = "4BV6NQ0X";
         String secretKey = "EWWARKQXLRETERG5AHWD07ZITOETOV12";
         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-//        String returnUrl = "http://jewerystorepoppy.online/staff/pos?orderId=" + order.getId();
-        String returnUrl = "http://localhost:5173/staff/pos?orderId=" + order.getId();
+        String returnUrl = "http://jewerystorepoppy.online/staff/pos?orderId=" + order.getId();
+//        String returnUrl = "http://localhost:5173/staff/pos?orderId=" + order.getId();
 
         String currCode = "VND";
         Map<String, String> vnpParams = new TreeMap<>();
@@ -152,7 +171,13 @@ public class OrderService {
     }
 
 
-    public List<Orders> getOrder() {
-        return orderRepository.findAll();
+    public List<Orders> getOrder(String phone) {
+        List<Orders> orders;
+        if (phone != null) {
+            orders = orderRepository.findOrdersByCustomerPhoneContaining(phone);
+        } else {
+            orders = orderRepository.findAll();
+        }
+        return orders.stream().sorted(Comparator.comparing(Orders::getCreateAt).reversed()).toList();
     }
 }
