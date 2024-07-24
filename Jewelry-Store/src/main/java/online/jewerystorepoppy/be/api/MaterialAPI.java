@@ -1,7 +1,9 @@
 package online.jewerystorepoppy.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import online.jewerystorepoppy.be.entity.Category;
 import online.jewerystorepoppy.be.model.MaterialRequest;
+import online.jewerystorepoppy.be.service.CategoryService;
 import online.jewerystorepoppy.be.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

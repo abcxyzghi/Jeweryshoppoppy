@@ -2,6 +2,7 @@ package online.jewerystorepoppy.be.model;
 
 import lombok.Data;
 import online.jewerystorepoppy.be.entity.Size;
+
 import java.util.List;
 
 @Data
