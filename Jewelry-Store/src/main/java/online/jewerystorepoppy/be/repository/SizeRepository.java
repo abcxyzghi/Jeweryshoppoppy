@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SizeRepository extends JpaRepository<Size, Long> {
     List<Size> findSizesByIsDeletedFalse();
+
+    Size findSizeById(long id);
 }
