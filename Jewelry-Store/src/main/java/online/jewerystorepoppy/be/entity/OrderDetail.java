@@ -1,5 +1,6 @@
 package online.jewerystorepoppy.be.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,9 +18,18 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     Orders order;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     Product product;
+
+    @OneToOne(mappedBy = "orderDetail", cascade = CascadeType.ALL)
+    Guarantee guarantee;
+
+    @ManyToOne()
+    @JoinColumn(name = "order_buy_id")
+    @JsonIgnore
+    OrderBuy orderBuy;
 }
