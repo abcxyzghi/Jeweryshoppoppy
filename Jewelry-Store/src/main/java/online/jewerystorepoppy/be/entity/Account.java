@@ -38,6 +38,8 @@ public class Account implements UserDetails {
 
     Role role;
 
+    int point = 0;
+
     @OneToMany(mappedBy = "staff")
     @JsonIgnore
     List<Shift> shifts;
