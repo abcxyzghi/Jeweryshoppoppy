@@ -80,5 +80,55 @@ public class DashboardAPI {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping("admin")
+    public ResponseEntity getAdmin() {
+        // Define the date format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Account account = authenticationService.getCurrentAccount();
 
+        // Get today's date
+        LocalDate today = LocalDate.now();
+
+        // Calculate the start and end dates for past and future periods
+        LocalDate startPast = today.minusMonths(3);
+        LocalDate endPast = today.minusDays(1); // Up to yesterday
+
+        LocalDate startFuture = today.plusDays(1); // Starting from tomorrow
+        LocalDate endFuture = today.plusMonths(3);
+
+
+        DashboardStaffResponse totalData = new DashboardStaffResponse();
+        totalData.setLabel("Money");
+
+        DashboardStaffResponse orderData = new DashboardStaffResponse();
+        orderData.setLabel("Order");
+
+        // Loop through the past 3 months
+        System.out.println("Months in the past 3 months:");
+        for (LocalDate date = startPast; !date.isAfter(endPast); date = date.plusMonths(1)) {
+            List<Orders> orders = orderRepository.findOrdersByMonthAndYear(date.getMonthValue(), 2024);
+            System.out.println(orders.size());
+            orderData.getData().add(orders.size());
+            totalData.getData().add((int) orders.stream()
+                    .mapToDouble(Orders::getTotalAmount)
+                    .sum());
+        }
+
+        // Loop through the next 3 months
+        System.out.println("\nMonths in the next 3 months:");
+        for (LocalDate date = startFuture; !date.isAfter(endFuture); date = date.plusMonths(1)) {
+            List<Orders> orders = orderRepository.findOrdersByMonthAndYear(date.getMonthValue(), 2024);
+            System.out.println(orders.size());
+            orderData.getData().add(orders.size());
+            totalData.getData().add((int) orders.stream()
+                    .mapToDouble(Orders::getTotalAmount)
+                    .sum());
+        }
+
+        ArrayList<DashboardStaffResponse> list = new ArrayList<>();
+        list.add(orderData);
+        list.add(totalData);
+
+        return ResponseEntity.ok(list);
+    }
 }
