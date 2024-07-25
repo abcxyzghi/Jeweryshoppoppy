@@ -1,7 +1,10 @@
 package online.jewerystorepoppy.be.api;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import online.jewerystorepoppy.be.entity.Category;
+import online.jewerystorepoppy.be.entity.Product;
 import online.jewerystorepoppy.be.model.ProductRequest;
+import online.jewerystorepoppy.be.service.CategoryService;
 import online.jewerystorepoppy.be.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,11 @@ public class ProductAPI {
         return ResponseEntity.ok(productService.get());
     }
 
+    @GetMapping("category/{id}")
+    public ResponseEntity getByCategory(@PathVariable long id, @RequestParam(required = false) String keyWord) {
+        return ResponseEntity.ok(productService.getByCategory(id, keyWord).stream());
+    }
+
     @GetMapping("{id}")
     public ResponseEntity get(@PathVariable long id) {
         return ResponseEntity.ok(productService.getById(id));
@@ -31,14 +39,13 @@ public class ProductAPI {
     }
 
 
-
     @PutMapping("{id}")
     public ResponseEntity update(@PathVariable long id, @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok(productService.update(id, productRequest));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity detele(@PathVariable long id) {
         return ResponseEntity.ok(productService.delete(id));
     }
 }
