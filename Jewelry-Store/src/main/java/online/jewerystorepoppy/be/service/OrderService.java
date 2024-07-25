@@ -6,10 +6,7 @@ import online.jewerystorepoppy.be.enums.OrderStatus;
 import online.jewerystorepoppy.be.exception.AuthException;
 import online.jewerystorepoppy.be.model.OrderDetailRequest;
 import online.jewerystorepoppy.be.model.OrderRequest;
-import online.jewerystorepoppy.be.repository.AuthenticationRepository;
-import online.jewerystorepoppy.be.repository.OrderRepository;
-import online.jewerystorepoppy.be.repository.ProductRepository;
-import online.jewerystorepoppy.be.repository.VoucherRepository;
+import online.jewerystorepoppy.be.repository.*;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +39,9 @@ public class OrderService {
     @Autowired
     VoucherRepository voucherRepository;
 
+    @Autowired
+    SizeRepository sizeRepository;
+
     public Orders createOrder(OrderRequest orderRequest) {
         float discount = 0;
         Orders order = new Orders();
@@ -56,6 +56,7 @@ public class OrderService {
         order.setOrderDetails(orderDetails);
         order.setCustomer(customer);
         order.getVouchers().add(voucher);
+        order.setPoint(orderRequest.getPoint());
         if (customer != null) {
             customer.getOrders().add(order);
         }
@@ -66,6 +67,7 @@ public class OrderService {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.add(Calendar.YEAR, 1);
+            Size size = sizeRepository.findSizeById(orderDetailRequest.getSizeId());
 
             Guarantee guarantee = new Guarantee();
             guarantee.setStatus(GuaranteeStatus.ACTIVE);
@@ -74,11 +76,13 @@ public class OrderService {
             guarantee.setEndAt(calendar.getTime());
 
             Product product = productRepository.findById(orderDetailRequest.getProductId()).get();
-            if(product.getQuantity() < orderDetailRequest.getQuantity()) {
+            if (product.getQuantity() < orderDetailRequest.getQuantity()) {
                 throw new AuthException("Don't have available for sale!");
-            }else{
-                product.setQuantity(product.getQuantity() -  orderDetailRequest.getQuantity());
+            } else {
+                product.setQuantity(product.getQuantity() - orderDetailRequest.getQuantity());
             }
+            size.getOrderDetails().add(orderDetail);
+            orderDetail.setSize(size);
             orderDetail.setProduct(product);
             orderDetail.setQuantity(orderDetailRequest.getQuantity());
             orderDetail.setOrder(order);
@@ -92,14 +96,35 @@ public class OrderService {
             voucher.setOrder(order);
         }
 
+        if (order.getPoint() > 0) {
+            discount += totalAmount * order.getPoint() / 100;
+        }
+
         order.setTotalAmount(totalAmount - discount);
         return orderRepository.save(order);
     }
 
     public Orders updateStatusOrder(long orderId, OrderStatus orderStatus) {
         Orders orders = orderRepository.findById(orderId).get();
-        orders.setStatus(orderStatus);
+
+        if (orderStatus == OrderStatus.PAID && orders.getStatus() != OrderStatus.PAID) {
+            orders.setStatus(orderStatus);
+            Account account = orders.getCustomer();
+            if (orders.getPoint() > 0) {
+                account.setPoint(account.getPoint() - orders.getPoint());
+            }
+            int point = calculatePoints(orders.getTotalAmount());
+            if (point > 30) point = 30;
+            account.setPoint(account.getPoint() + point);
+            authenticationRepository.save(account);
+        }
+
         return orderRepository.save(orders);
+    }
+
+    public static int calculatePoints(float money) {
+        int points = (int) (money / 1000000);
+        return points;
     }
 
     public String createUrl(OrderRequest orderRequest) throws NoSuchAlgorithmException, InvalidKeyException, Exception {
