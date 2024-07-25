@@ -27,4 +27,8 @@ public class Size {
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     @JsonIgnore
     List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "size", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<OrderDetail> orderDetails = new ArrayList<>();
 }
