@@ -15,6 +15,7 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     int quantity;
+    boolean isBuyBack = false;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -24,6 +25,10 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "product_id")
     Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    Size size;
 
     @OneToOne(mappedBy = "orderDetail", cascade = CascadeType.ALL)
     Guarantee guarantee;
