@@ -38,7 +38,6 @@ public class ProductAPI {
         return ResponseEntity.ok(productService.create(productRequest));
     }
 
-
     @PutMapping("{id}")
     public ResponseEntity update(@PathVariable long id, @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok(productService.update(id, productRequest));

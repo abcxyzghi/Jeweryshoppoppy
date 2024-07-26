@@ -17,3 +17,4 @@ public class ProductRequest {
     List<Long> materialIds = new ArrayList<>();
     List<Long> sizeIds;
 }
+
