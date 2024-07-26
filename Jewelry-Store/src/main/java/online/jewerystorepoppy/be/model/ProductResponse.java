@@ -18,4 +18,5 @@ public class ProductResponse {
     List<Long> sizeIds;
     String image;
     List<Size> sizes;
+    boolean isDeleted;
 }
