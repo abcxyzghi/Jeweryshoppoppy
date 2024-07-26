@@ -9,4 +9,5 @@ public class OrderRequest {
     List<OrderDetailRequest> orderDetailRequests;
     long customerId;
     long voucherId;
+    int point = 0;
 }
